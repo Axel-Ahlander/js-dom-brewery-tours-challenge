@@ -132,10 +132,8 @@ document.getElementById('select-state-form').addEventListener('submit', (event) 
 
 document.getElementById('filter-by-type').addEventListener('change', GetBreweriesByTour);
 
-document.getElementById('select-company-form').addEventListener('submit', (event) => {
-    event.preventDefault();
-    GetBreweriesByTour();
-});
+document.getElementById('filter-by-type').addEventListener('change', GetBreweriesByTour);
+
 
 document.getElementById('select-company').addEventListener('input', () => {
     GetBreweriesByTour();
