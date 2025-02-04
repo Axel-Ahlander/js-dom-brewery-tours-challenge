@@ -1,7 +1,6 @@
 async function fetchBreweries(state) {
     const response = await fetch(`https://api.openbrewerydb.org/breweries?by_state=${state}`);
     const data = await response.json();
-    console.log(data);
     let breweries = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -12,10 +11,51 @@ async function fetchBreweries(state) {
 
     return breweries;
 }
-async function GetBreweriesByTour(){
-    
+
+async function fetchBreweriesByName(name) {
+    const response = await fetch(`https://api.openbrewerydb.org/breweries?by_name=${name}`);
+    const data = await response.json();
+    let breweries = [];
+
+    for (let i = 0; i < data.length; i++) {
+        if ((data[i].brewery_type == 'micro' || data[i].brewery_type == 'regional' || data[i].brewery_type == 'brewpub') && (data[i].name.toLowerCase().includes(name.toLowerCase()))) {
+            breweries.push(data[i]);
+        }
+    }
+
+
+
+    return breweries;
+}
+async function GetBreweriesByTour() {
     let acstate = document.getElementById('select-state').value.trim();
-    const breweries = await fetchBreweries(acstate);
+    let acname = document.getElementById('select-company').value.trim();
+    let breweries = [];
+
+    
+    if (acstate) {
+        breweries = await fetchBreweries(acstate);
+    }
+
+    
+    if (acname) {
+        const breweriesByName = await fetchBreweriesByName(acname);
+        if (acstate) {
+            let matchedBreweries = [];
+            for (let i = 0; i < breweries.length; i++) {
+                for (let j = 0; j < breweriesByName.length; j++) {
+                    if (breweries[i].id === breweriesByName[j].id) {
+                        matchedBreweries.push(breweries[i]);
+                    }
+                }
+            }
+            breweries = matchedBreweries;
+        } else {
+            breweries = breweriesByName;
+        }
+    }
+
+
     let brew = document.getElementById('filter-by-type');
     let allBreweries = document.getElementById('breweries-list');
    
@@ -83,9 +123,20 @@ async function GetBreweriesByTour(){
 }
 
 
+
+
 document.getElementById('select-state-form').addEventListener('submit', (event) => {
     event.preventDefault();
     GetBreweriesByTour();
 });
 
 document.getElementById('filter-by-type').addEventListener('change', GetBreweriesByTour);
+
+document.getElementById('select-company-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    GetBreweriesByTour();
+});
+
+document.getElementById('select-company').addEventListener('input', () => {
+    GetBreweriesByTour();
+});

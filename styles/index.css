@@ -16,6 +16,10 @@ body {
   place-items: center;
 }
 
+input#select-company {
+  margin-left: 15px;
+}
+
 .select-state-section h2 {
   width: 200px;
   margin-bottom: 1.5rem;
